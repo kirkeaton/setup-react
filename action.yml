@@ -1,0 +1,28 @@
+name: 'Setup React'
+description: 'GitHub Action to set up your workflow with a specific version of React'
+author: 'Kirk Eaton <contact@kirkeaton.ca>'
+inputs:
+  react-version:
+    description: 'The React version to install.'
+    required: true
+  react-dom-version:
+    description: 'The React DOM version to install.'
+    required: true
+  react-types-version:
+    description: 'The React types version to install.'
+    required: false
+  react-dom-types-version:
+    description: 'The React DOM types version to install.'
+    required: false
+outputs:
+  react-version:
+    description: 'The installed React version.'
+  react-dom-version:
+    description: 'The installed React DOM version.'
+  react-types-version:
+    description: 'The installed React types version.'
+  react-dom-types-version:
+    description: 'The installed React DOM types version.'
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

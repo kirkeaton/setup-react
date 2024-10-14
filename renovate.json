@@ -1,0 +1,6 @@
+{
+  "extends": ["github>kirkeaton/renovate-config"],
+  "nvm": {
+    "enabled": false
+  }
+}
