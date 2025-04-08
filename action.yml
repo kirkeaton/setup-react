@@ -1,6 +1,9 @@
 name: 'Setup React'
 description: 'GitHub Action to set up your workflow with a specific version of React'
 author: 'Kirk Eaton <contact@kirkeaton.ca>'
+branding:
+  color: 'blue'
+  icon: 'play'
 inputs:
   react-version:
     description: 'The React version to install.'
