@@ -13,7 +13,7 @@ importers:
         version: 1.11.1
       package-manager-detector:
         specifier: ^1.0.0
-        version: 1.1.0
+        version: 1.2.0
     devDependencies:
       '@kirkeaton/prettier-config':
         specifier: 1.0.5
@@ -1021,8 +1021,8 @@ packages:
     resolution: {integrity: sha512-U1etNYuMJoIz3ZXSrrySFjsXQTWOx2/jdi86L+2pRvph/qMKL6sbcCYdH23fqsbm8TH2Gn0OybpT4eSFlCVHww==}
     engines: {node: '>=4'}
 
-  package-manager-detector@1.1.0:
-    resolution: {integrity: sha512-Y8f9qUlBzW8qauJjd/eu6jlpJZsuPJm2ZAV0cDVd420o4EdpH5RPdoCv+60/TdJflGatr4sDfpAL6ArWZbM5tA==}
+  package-manager-detector@1.2.0:
+    resolution: {integrity: sha512-PutJepsOtsqVfUsxCzgTTpyXmiAgvKptIgY4th5eq5UXXFhj5PxfQ9hnGkypMeovpAvVshFRItoFHYO18TCOqA==}
 
   parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
@@ -2261,7 +2261,7 @@ snapshots:
 
   p-try@1.0.0: {}
 
-  package-manager-detector@1.1.0: {}
+  package-manager-detector@1.2.0: {}
 
   parent-module@1.0.1:
     dependencies:
