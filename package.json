@@ -14,8 +14,8 @@
     "@kirkeaton/prettier-config": "1.0.5",
     "@kirkeaton/semantic-release-config": "1.0.4",
     "@kirkeaton/tsconfig": "1.0.3",
-    "@types/node": "22.15.9",
-    "esbuild": "0.25.3",
+    "@types/node": "22.15.11",
+    "esbuild": "0.25.4",
     "prettier": "3.5.3",
     "semantic-release": "24.2.3",
     "typescript": "5.8.3"
