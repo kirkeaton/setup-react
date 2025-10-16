@@ -9,5 +9,5 @@ await esbuild.build({
   minify: true,
   outfile: 'dist/index.js',
   platform: 'node',
-  target: 'node20',
+  target: 'node24',
 });

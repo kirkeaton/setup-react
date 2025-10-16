@@ -27,5 +27,5 @@ outputs:
   react-dom-types-version:
     description: 'The installed React DOM types version.'
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'dist/index.js'

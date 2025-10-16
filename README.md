@@ -7,7 +7,7 @@ GitHub Action to set up your workflow with a specific version of React.
 See [action.yml](action.yml)
 
 ```yaml
-- uses: kirkeaton/setup-react@v1
+- uses: kirkeaton/setup-react@v2
   with:
     # The version of `react` to install.
     react-version: ''
