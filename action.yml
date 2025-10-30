@@ -4,7 +4,8 @@ author: 'Kirk Eaton <contact@kirkeaton.ca>'
 branding:
   color: 'blue'
   icon: 'play'
-inputs:
+inputs: Setup React
+  uses: kirkeaton/setup-react@v2.0.1
   react-version:
     description: 'The React version to install.'
     required: true
