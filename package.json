@@ -7,7 +7,7 @@
     "url": "https://github.com/kirkeaton/setup-react/issues"
   },
   "dependencies": {
-    "@actions/core": "2.0.0",
+    "@actions/core": "2.0.1",
     "package-manager-detector": "1.6.0"
   },
   "devDependencies": {
