@@ -11,7 +11,7 @@
     "package-manager-detector": "1.6.0"
   },
   "devDependencies": {
-    "@kirkeaton/prettier-config": "1.0.6",
+    "@kirkeaton/prettier-config": "2.0.0",
     "@kirkeaton/tsconfig": "3.0.0",
     "@types/node": "24.12.4",
     "esbuild": "0.28.0",
