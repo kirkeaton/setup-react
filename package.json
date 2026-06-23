@@ -14,8 +14,8 @@
     "@kirkeaton/prettier-config": "2.0.0",
     "@kirkeaton/tsconfig": "3.0.0",
     "@types/node": "24.13.2",
-    "esbuild": "0.28.1",
     "prettier": "3.9.4",
+    "rolldown": "1.1.4",
     "typescript": "6.0.3"
   },
   "engines": {
@@ -38,11 +38,11 @@
     "url": "git+https://github.com/kirkeaton/setup-react.git"
   },
   "scripts": {
-    "build": "npm run clean && ./build.mjs",
+    "build": "npm run clean && rolldown -c rolldown.config.js",
     "clean": "rm -rf dist",
-    "format": "prettier \"**/*.{json,md,mjs,mts}\" --write",
-    "lint": "prettier \"**/*.{json,md,mjs,mts}\" --check",
+    "format": "prettier \"**/*.{json,md,js,ts}\" --write",
+    "lint": "prettier \"**/*.{json,md,js,ts}\" --check",
     "typecheck": "tsc --noEmit"
   },
-  "type": "commonjs"
+  "type": "module"
 }

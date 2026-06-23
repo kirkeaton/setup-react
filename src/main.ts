@@ -1,6 +1,6 @@
 import { setFailed } from '@actions/core';
 
-import { setupReact } from './setup-react.mjs';
+import { setupReact } from './setup-react.js';
 
 const run = async () => {
   try {
