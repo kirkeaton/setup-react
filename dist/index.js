@@ -17191,73 +17191,77 @@ const yarnBerry = {
 		0
 	]
 };
-const pnpm = {
-	"agent": ["pnpm", 0],
-	"run": [
-		"pnpm",
-		"run",
-		0
-	],
-	"install": [
-		"pnpm",
-		"i",
-		0
-	],
-	"frozen": [
-		"pnpm",
-		"i",
-		"--frozen-lockfile",
-		0
-	],
-	"global": [
-		"pnpm",
-		"add",
-		"-g",
-		0
-	],
-	"add": [
-		"pnpm",
-		"add",
-		0
-	],
-	"upgrade": [
-		"pnpm",
-		"update",
-		0
-	],
-	"upgrade-interactive": [
-		"pnpm",
-		"update",
-		"-i",
-		0
-	],
-	"dedupe": [
-		"pnpm",
-		"dedupe",
-		0
-	],
-	"execute": [
-		"pnpm",
-		"dlx",
-		0
-	],
-	"execute-local": [
-		"pnpm",
-		"exec",
-		0
-	],
-	"uninstall": [
-		"pnpm",
-		"remove",
-		0
-	],
-	"global_uninstall": [
-		"pnpm",
-		"remove",
-		"--global",
-		0
-	]
-};
+function createPnpmCommands(cli) {
+	return {
+		"agent": [cli, 0],
+		"run": [
+			cli,
+			"run",
+			0
+		],
+		"install": [
+			cli,
+			"i",
+			0
+		],
+		"frozen": [
+			cli,
+			"i",
+			"--frozen-lockfile",
+			0
+		],
+		"global": [
+			cli,
+			"add",
+			"-g",
+			0
+		],
+		"add": [
+			cli,
+			"add",
+			0
+		],
+		"upgrade": [
+			cli,
+			"update",
+			0
+		],
+		"upgrade-interactive": [
+			cli,
+			"update",
+			"-i",
+			0
+		],
+		"dedupe": [
+			cli,
+			"dedupe",
+			0
+		],
+		"execute": [
+			cli,
+			"dlx",
+			0
+		],
+		"execute-local": [
+			cli,
+			"exec",
+			0
+		],
+		"uninstall": [
+			cli,
+			"remove",
+			0
+		],
+		"global_uninstall": [
+			cli,
+			"remove",
+			"--global",
+			0
+		]
+	};
+}
+const pnpm = createPnpmCommands("pnpm");
+const pnpmRush = createPnpmCommands("rush-pnpm");
 const bun = {
 	"agent": ["bun", 0],
 	"run": [
@@ -17525,6 +17529,7 @@ const COMMANDS = {
 		...pnpm,
 		run: dashDashArg("pnpm", "run", ["-F", "--filter"])
 	},
+	"pnpm-rush": pnpmRush,
 	"bun": bun,
 	"aube": aube,
 	"deno": deno,
@@ -17554,6 +17559,7 @@ const AGENTS = [
 	"yarn@berry",
 	"pnpm",
 	"pnpm@6",
+	"pnpm-rush",
 	"bun",
 	"deno",
 	"nub",
@@ -17565,6 +17571,7 @@ const LOCKS = {
 	"bun.lock": "bun",
 	"bun.lockb": "bun",
 	"deno.lock": "deno",
+	"nub.lock": "nub",
 	"pnpm-lock.yaml": "pnpm",
 	"pnpm-workspace.yaml": "pnpm",
 	"yarn.lock": "yarn",
@@ -17620,6 +17627,10 @@ async function detect(options = {}) {
 	for (const directory of lookup(cwd)) {
 		for (const strategy of strategies) switch (strategy) {
 			case "lockfile":
+				if (await pathExists(path.join(directory, "rush.json"), "file")) return {
+					name: "pnpm",
+					agent: "pnpm-rush"
+				};
 				for (const lock of Object.keys(LOCKS)) if (await pathExists(path.join(directory, lock), "file")) {
 					const name = LOCKS[lock];
 					const result = await parsePackageJson(path.join(directory, "package.json"), options);
