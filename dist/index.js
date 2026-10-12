@@ -17413,6 +17413,11 @@ const npm = {
 		"dedupe",
 		0
 	],
+	"why": [
+		"npm",
+		"why",
+		0
+	],
 	"execute": ["npx", 0],
 	"execute-local": ["npx", 0],
 	"uninstall": [
@@ -17467,6 +17472,11 @@ const yarn = {
 		0
 	],
 	"dedupe": null,
+	"why": [
+		"yarn",
+		"why",
+		0
+	],
 	"execute": ["npx", 0],
 	"execute-local": dashDashArg("yarn", "exec"),
 	"uninstall": [
@@ -17574,6 +17584,11 @@ function createPnpmCommands(cli) {
 			"dedupe",
 			0
 		],
+		"why": [
+			cli,
+			"why",
+			0
+		],
 		"execute": [
 			cli,
 			"dlx",
@@ -17640,6 +17655,11 @@ const bun = {
 		0
 	],
 	"dedupe": null,
+	"why": [
+		"bun",
+		"why",
+		0
+	],
 	"execute": [
 		"bun",
 		"x",
@@ -17707,6 +17727,11 @@ const aube = {
 		"dedupe",
 		0
 	],
+	"why": [
+		"aube",
+		"why",
+		0
+	],
 	"execute": [
 		"aube",
 		"dlx",
@@ -17729,6 +17754,18 @@ const aube = {
 		0
 	]
 };
+function denoAdd(args) {
+	if (args.includes("--npm") || args.includes("--jsr")) return [
+		"deno",
+		"add",
+		...args
+	];
+	return [
+		"deno",
+		"add",
+		...args.map((arg) => arg.startsWith("-") || arg.includes(":") ? arg : `npm:${arg}`)
+	];
+}
 const deno = {
 	"agent": ["deno", 0],
 	"run": [
@@ -17753,11 +17790,7 @@ const deno = {
 		"-g",
 		0
 	],
-	"add": [
-		"deno",
-		"add",
-		0
-	],
+	"add": denoAdd,
 	"upgrade": [
 		"deno",
 		"outdated",
@@ -17771,6 +17804,11 @@ const deno = {
 		0
 	],
 	"dedupe": null,
+	"why": [
+		"deno",
+		"why",
+		0
+	],
 	"execute": [
 		"deno",
 		"x",
@@ -17839,6 +17877,11 @@ const nub = {
 		"dedupe",
 		0
 	],
+	"why": [
+		"nub",
+		"why",
+		0
+	],
 	"execute": ["nubx", 0],
 	"execute-local": [
 		"nub",
@@ -17857,6 +17900,51 @@ const nub = {
 		0
 	]
 };
+const upm = {
+	"agent": ["upm", 0],
+	"run": [
+		"upm",
+		"run",
+		0
+	],
+	"install": [
+		"upm",
+		"install",
+		0
+	],
+	"frozen": [
+		"upm",
+		"install",
+		"--frozen-lockfile",
+		0
+	],
+	"global": null,
+	"add": [
+		"upm",
+		"add",
+		0
+	],
+	"upgrade": null,
+	"upgrade-interactive": null,
+	"dedupe": [
+		"upm",
+		"dedupe",
+		0
+	],
+	"execute": ["upx", 0],
+	"execute-local": [
+		"upm",
+		"exec",
+		0
+	],
+	"uninstall": [
+		"upm",
+		"remove",
+		0
+	],
+	"global_uninstall": null,
+	"why": null
+};
 const COMMANDS = {
 	"npm": npm,
 	"yarn": yarn,
@@ -17870,10 +17958,92 @@ const COMMANDS = {
 	"bun": bun,
 	"aube": aube,
 	"deno": deno,
-	"nub": nub
+	"nub": nub,
+	"upm": upm
 };
-function resolveCommand(agent, command, args) {
+const WORKSPACE_ROOT_CHECK_COMMANDS = {
+	"yarn": ["add", "uninstall"],
+	"pnpm": ["add"],
+	"pnpm@6": ["add"],
+	"pnpm-rush": ["add"]
+};
+const MINIMUM_RELEASE_AGE_FLAGS = {
+	"npm": {
+		commands: [
+			"install",
+			"add",
+			"upgrade",
+			"global",
+			"execute"
+		],
+		flag: (minutes) => `--min-release-age=${minutes / 1440}`
+	},
+	"pnpm": {
+		commands: [
+			"install",
+			"add",
+			"upgrade",
+			"upgrade-interactive",
+			"global",
+			"execute"
+		],
+		flag: (minutes) => `--config.minimum-release-age=${minutes}`
+	},
+	"pnpm-rush": {
+		commands: [
+			"install",
+			"add",
+			"upgrade",
+			"upgrade-interactive",
+			"global",
+			"execute"
+		],
+		flag: (minutes) => `--config.minimum-release-age=${minutes}`
+	},
+	"bun": {
+		commands: [
+			"install",
+			"add",
+			"upgrade",
+			"upgrade-interactive",
+			"global"
+		],
+		flag: (minutes) => `--minimum-release-age=${minutes * 60}`
+	},
+	"deno": {
+		commands: [
+			"install",
+			"add",
+			"global",
+			"execute"
+		],
+		flag: (minutes) => `--minimum-dependency-age=${minutes}`
+	},
+	"nub": {
+		commands: [
+			"install",
+			"add",
+			"upgrade",
+			"upgrade-interactive",
+			"global",
+			"execute"
+		],
+		flag: (minutes) => `--minimum-release-age=${minutes}`
+	},
+	"upm": {
+		commands: [
+			"install",
+			"add",
+			"execute"
+		],
+		flag: (minutes) => `--min-release-age=${minutes / 1440}`
+	}
+};
+function resolveCommand(agent, command, args, options = {}) {
 	const value = COMMANDS[agent][command];
+	if (options.ignoreWorkspaceRootCheck && WORKSPACE_ROOT_CHECK_COMMANDS[agent]?.includes(command)) args = ["--ignore-workspace-root-check", ...args];
+	const releaseAge = MINIMUM_RELEASE_AGE_FLAGS[agent];
+	if (options.minimumReleaseAge != null && releaseAge?.commands.includes(command)) args = [releaseAge.flag(options.minimumReleaseAge), ...args];
 	return constructCommand(value, args);
 }
 function constructCommand(value, args) {
@@ -17900,7 +18070,8 @@ const AGENTS = [
 	"bun",
 	"deno",
 	"nub",
-	"aube"
+	"aube",
+	"upm"
 ];
 const LOCKS = {
 	"aube-lock.yaml": "aube",
@@ -17909,6 +18080,7 @@ const LOCKS = {
 	"bun.lockb": "bun",
 	"deno.lock": "deno",
 	"nub.lock": "nub",
+	"upm.lock": "upm",
 	"pnpm-lock.yaml": "pnpm",
 	"pnpm-workspace.yaml": "pnpm",
 	"yarn.lock": "yarn",
@@ -17919,6 +18091,7 @@ const INSTALL_METADATA = {
 	"node_modules/.aube/": "aube",
 	"node_modules/.deno/": "deno",
 	"node_modules/.pnpm/": "pnpm",
+	"node_modules/.upm/": "upm",
 	"node_modules/.yarn-state.yml": "yarn",
 	"node_modules/.yarn_integrity": "yarn",
 	"node_modules/.package-lock.json": "npm",
@@ -17999,56 +18172,57 @@ async function detect(options = {}) {
 	}
 	return null;
 }
+function normalizeAgentVersion(version) {
+	return version?.match(/\d+(\.\d+){0,2}/)?.[0] ?? version;
+}
 function getNameAndVer(pkg) {
-	const handelVer = (version) => version?.match(/\d+(\.\d+){0,2}/)?.[0] ?? version;
 	if (typeof pkg.packageManager === "string") {
 		const [name, ver] = pkg.packageManager.replace(/^\^/, "").split("@");
 		return {
 			name,
-			ver: handelVer(ver)
+			ver: normalizeAgentVersion(ver)
 		};
 	}
 	if (typeof pkg.devEngines?.packageManager?.name === "string") return {
 		name: pkg.devEngines.packageManager.name,
-		ver: handelVer(pkg.devEngines.packageManager.version)
+		ver: normalizeAgentVersion(pkg.devEngines.packageManager.version)
 	};
 }
 async function handlePackageManager(filepath, options) {
 	try {
 		const content = await fs.readFile(filepath, "utf8");
 		const pkg = options.packageJsonParser ? await options.packageJsonParser(content, filepath) : JSON.parse(content);
-		let agent;
 		const nameAndVer = getNameAndVer(pkg);
-		if (nameAndVer) {
-			const name = nameAndVer.name;
-			const ver = nameAndVer.ver;
-			let version = ver;
-			if (name === "yarn" && ver && Number.parseInt(ver) > 1) {
-				agent = "yarn@berry";
-				version = "berry";
-				return {
-					name,
-					agent,
-					version
-				};
-			} else if (name === "pnpm" && ver && Number.parseInt(ver) < 7) {
-				agent = "pnpm@6";
-				return {
-					name,
-					agent,
-					version
-				};
-			} else if (AGENTS.includes(name)) {
-				agent = name;
-				return {
-					name,
-					agent,
-					version
-				};
-			} else return options.onUnknown?.(pkg.packageManager) ?? null;
-		}
+		if (nameAndVer) return resolveAgent(nameAndVer.name, nameAndVer.ver) ?? options.onUnknown?.(pkg.packageManager) ?? null;
 	} catch {}
 	return null;
+}
+function resolveAgent(name, ver) {
+	let agent;
+	let version = ver;
+	if (name === "yarn" && ver && Number.parseInt(ver) > 1) {
+		agent = "yarn@berry";
+		version = "berry";
+		return {
+			name,
+			agent,
+			version
+		};
+	} else if (name === "pnpm" && ver && Number.parseInt(ver) < 7) {
+		agent = "pnpm@6";
+		return {
+			name,
+			agent,
+			version
+		};
+	} else if (AGENTS.includes(name)) {
+		agent = name;
+		return {
+			name,
+			agent,
+			version
+		};
+	}
 }
 function isMetadataYarnClassic(metadataPath) {
 	return metadataPath.endsWith(".yarn_integrity");
