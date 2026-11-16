@@ -1,16 +1,16 @@
 import { createRequire } from "node:module";
-import * as os$1 from "os";
-import os, { EOL } from "os";
+import * as os from "os";
+import os$1, { EOL } from "os";
 import * as crypto from "crypto";
-import * as fs$1 from "fs";
+import * as fs from "fs";
 import { constants, promises } from "fs";
-import * as path$1 from "path";
+import * as path from "path";
 import * as events from "events";
 import { promisify } from "node:util";
 import * as child from "child_process";
 import { setTimeout as setTimeout$1 } from "timers";
-import fs, { readFile } from "node:fs/promises";
-import path, { resolve } from "node:path";
+import fs$1, { readFile } from "node:fs/promises";
+import path$1, { resolve } from "node:path";
 import process$1 from "node:process";
 import { exec } from "node:child_process";
 
@@ -106,7 +106,7 @@ function toCommandProperties(annotationProperties) {
 */
 function issueCommand(command, properties, message) {
 	const cmd = new Command(command, properties, message);
-	process.stdout.write(cmd.toString() + os$1.EOL);
+	process.stdout.write(cmd.toString() + os.EOL);
 }
 const CMD_STRING = "::";
 var Command = class {
@@ -145,15 +145,15 @@ function escapeProperty(s) {
 function issueFileCommand(command, message) {
 	const filePath = process.env[`GITHUB_${command}`];
 	if (!filePath) throw new Error(`Unable to find environment variable for file command ${command}`);
-	if (!fs$1.existsSync(filePath)) throw new Error(`Missing file at path: ${filePath}`);
-	fs$1.appendFileSync(filePath, `${toCommandValue(message)}${os$1.EOL}`, { encoding: "utf8" });
+	if (!fs.existsSync(filePath)) throw new Error(`Missing file at path: ${filePath}`);
+	fs.appendFileSync(filePath, `${toCommandValue(message)}${os.EOL}`, { encoding: "utf8" });
 }
 function prepareKeyValueMessage(key, value) {
 	const delimiter = `ghadelimiter_${crypto.randomUUID()}`;
 	const convertedValue = toCommandValue(value);
 	if (key.includes(delimiter)) throw new Error(`Unexpected input: name should not contain the delimiter "${delimiter}"`);
 	if (convertedValue.includes(delimiter)) throw new Error(`Unexpected input: value should not contain the delimiter "${delimiter}"`);
-	return `${key}<<${delimiter}${os$1.EOL}${convertedValue}${os$1.EOL}${delimiter}`;
+	return `${key}<<${delimiter}${os.EOL}${convertedValue}${os.EOL}${delimiter}`;
 }
 
 // node_modules/tunnel/lib/tunnel.js
@@ -6199,7 +6199,7 @@ var require_client_h2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		});
 		return {
 			version: "h2",
-			defaultPipelining: Infinity,
+			defaultPipelining: 1e400,
 			write(...args) {
 				return writeH2(client, ...args);
 			},
@@ -9626,7 +9626,7 @@ var require_pending_interceptors_formatter = /* @__PURE__ */ __commonJSMin(((exp
 				"Status code": statusCode,
 				Persistent: persist ? PERSISTENT : NOT_PERSISTENT,
 				Invocations: timesInvoked,
-				Remaining: persist ? Infinity : times - timesInvoked
+				Remaining: persist ? 1e400 : times - timesInvoked
 			}));
 			this.logger.table(withPrettyHeaders);
 			return this.transform.read().toString();
@@ -10083,7 +10083,7 @@ var require_dns = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			pick: interceptorOpts?.pick ?? null,
 			dualStack,
 			affinity,
-			maxItems: interceptorOpts?.maxItems ?? Infinity
+			maxItems: interceptorOpts?.maxItems ?? 1e400
 		};
 		const instance = new DNSInstance(opts);
 		return (dispatch) => {
@@ -13178,7 +13178,7 @@ var require_cache = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			}
 			return true;
 		}
-		#internalMatchAll(request, options, maxResponses = Infinity) {
+		#internalMatchAll(request, options, maxResponses = 1e400) {
 			let r = null;
 			if (request !== void 0) {
 				if (request instanceof Request) {
@@ -16688,9 +16688,9 @@ var __awaiter$5 = void 0 && (void 0).__awaiter || function(thisArg, _arguments, 
 		step((generator = generator.apply(thisArg, _arguments || [])).next());
 	});
 };
-const { chmod, copyFile, lstat, mkdir, open, readdir, rename, rm, rmdir, stat, symlink, unlink } = fs$1.promises;
+const { chmod, copyFile, lstat, mkdir, open, readdir, rename, rm, rmdir, stat, symlink, unlink } = fs.promises;
 const IS_WINDOWS$1 = process.platform === "win32";
-const READONLY = fs$1.constants.O_RDONLY;
+const READONLY = fs.constants.O_RDONLY;
 function exists(fsPath) {
 	return __awaiter$5(this, void 0, void 0, function* () {
 		try {
@@ -16728,7 +16728,7 @@ function tryGetExecutablePath(filePath, extensions) {
 		}
 		if (stats && stats.isFile()) {
 			if (IS_WINDOWS$1) {
-				const upperExt = path$1.extname(filePath).toUpperCase();
+				const upperExt = path.extname(filePath).toUpperCase();
 				if (extensions.some((validExt) => validExt.toUpperCase() === upperExt)) return filePath;
 			} else if (isUnixExecutable(stats)) return filePath;
 		}
@@ -16744,10 +16744,10 @@ function tryGetExecutablePath(filePath, extensions) {
 			if (stats && stats.isFile()) {
 				if (IS_WINDOWS$1) {
 					try {
-						const directory = path$1.dirname(filePath);
-						const upperName = path$1.basename(filePath).toUpperCase();
+						const directory = path.dirname(filePath);
+						const upperName = path.basename(filePath).toUpperCase();
 						for (const actualName of yield readdir(directory)) if (upperName === actualName.toUpperCase()) {
-							filePath = path$1.join(directory, actualName);
+							filePath = path.join(directory, actualName);
 							break;
 						}
 					} catch (err) {
@@ -16834,21 +16834,21 @@ function findInPath(tool) {
 		if (!tool) throw new Error("parameter 'tool' is required");
 		const extensions = [];
 		if (IS_WINDOWS$1 && process.env["PATHEXT"]) {
-			for (const extension of process.env["PATHEXT"].split(path$1.delimiter)) if (extension) extensions.push(extension);
+			for (const extension of process.env["PATHEXT"].split(path.delimiter)) if (extension) extensions.push(extension);
 		}
 		if (isRooted(tool)) {
 			const filePath = yield tryGetExecutablePath(tool, extensions);
 			if (filePath) return [filePath];
 			return [];
 		}
-		if (tool.includes(path$1.sep)) return [];
+		if (tool.includes(path.sep)) return [];
 		const directories = [];
 		if (process.env.PATH) {
-			for (const p of process.env.PATH.split(path$1.delimiter)) if (p) directories.push(p);
+			for (const p of process.env.PATH.split(path.delimiter)) if (p) directories.push(p);
 		}
 		const matches = [];
 		for (const directory of directories) {
-			const filePath = yield tryGetExecutablePath(path$1.join(directory, tool), extensions);
+			const filePath = yield tryGetExecutablePath(path.join(directory, tool), extensions);
 			if (filePath) matches.push(filePath);
 		}
 		return matches;
@@ -16919,11 +16919,11 @@ var ToolRunner = class extends events.EventEmitter {
 	_processLineBuffer(data, strBuffer, onLine) {
 		try {
 			let s = strBuffer + data.toString();
-			let n = s.indexOf(os$1.EOL);
+			let n = s.indexOf(os.EOL);
 			while (n > -1) {
 				onLine(s.substring(0, n));
-				s = s.substring(n + os$1.EOL.length);
-				n = s.indexOf(os$1.EOL);
+				s = s.substring(n + os.EOL.length);
+				n = s.indexOf(os.EOL);
 			}
 			return s;
 		} catch (err) {
@@ -17056,14 +17056,14 @@ var ToolRunner = class extends events.EventEmitter {
 	*/
 	exec() {
 		return __awaiter$3(this, void 0, void 0, function* () {
-			if (!isRooted(this.toolPath) && (this.toolPath.includes("/") || IS_WINDOWS && this.toolPath.includes("\\"))) this.toolPath = path$1.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath);
+			if (!isRooted(this.toolPath) && (this.toolPath.includes("/") || IS_WINDOWS && this.toolPath.includes("\\"))) this.toolPath = path.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath);
 			this.toolPath = yield which(this.toolPath, true);
 			return new Promise((resolve, reject) => __awaiter$3(this, void 0, void 0, function* () {
 				this._debug(`exec tool: ${this.toolPath}`);
 				this._debug("arguments:");
 				for (const arg of this.args) this._debug(`   ${arg}`);
 				const optionsNonNull = this._cloneExecOptions(this.options);
-				if (!optionsNonNull.silent && optionsNonNull.outStream) optionsNonNull.outStream.write(this._getCommandString(optionsNonNull) + os$1.EOL);
+				if (!optionsNonNull.silent && optionsNonNull.outStream) optionsNonNull.outStream.write(this._getCommandString(optionsNonNull) + os.EOL);
 				const state = new ExecState(optionsNonNull, this.toolPath);
 				state.on("debug", (message) => {
 					this._debug(message);
@@ -17227,8 +17227,8 @@ var __awaiter$1 = void 0 && (void 0).__awaiter || function(thisArg, _arguments, 
 		step((generator = generator.apply(thisArg, _arguments || [])).next());
 	});
 };
-const platform = os.platform();
-const arch = os.arch();
+const platform = os$1.platform();
+const arch = os$1.arch();
 
 // node_modules/@actions/core/lib/core.js
 var __awaiter = void 0 && (void 0).__awaiter || function(thisArg, _arguments, P, generator) {
@@ -17295,7 +17295,7 @@ function getInput(name, options) {
 */
 function setOutput(name, value) {
 	if (process.env["GITHUB_OUTPUT"] || "") return issueFileCommand("OUTPUT", prepareKeyValueMessage(name, value));
-	process.stdout.write(os$1.EOL);
+	process.stdout.write(os.EOL);
 	issueCommand("set-output", { name }, toCommandValue(value));
 }
 /**
@@ -18082,18 +18082,18 @@ const INSTALL_METADATA = {
 // node_modules/package-manager-detector/dist/detect.mjs
 async function pathExists(path2, type) {
 	try {
-		const stat = await fs.stat(path2);
+		const stat = await fs$1.stat(path2);
 		return type === "file" ? stat.isFile() : stat.isDirectory();
 	} catch {
 		return false;
 	}
 }
 function* lookup(cwd = process$1.cwd()) {
-	let directory = path.resolve(cwd);
-	const { root } = path.parse(directory);
+	let directory = path$1.resolve(cwd);
+	const { root } = path$1.parse(directory);
 	while (directory && directory !== root) {
 		yield directory;
-		directory = path.dirname(directory);
+		directory = path$1.dirname(directory);
 	}
 }
 async function parsePackageJson(filepath, options) {
@@ -18108,19 +18108,19 @@ async function detect(options = {}) {
 	] } = options;
 	let stopDir;
 	if (typeof options.stopDir === "string") {
-		const resolved = path.resolve(options.stopDir);
+		const resolved = path$1.resolve(options.stopDir);
 		stopDir = (dir) => dir === resolved;
 	} else stopDir = options.stopDir;
 	for (const directory of lookup(cwd)) {
 		for (const strategy of strategies) switch (strategy) {
 			case "lockfile":
-				if (await pathExists(path.join(directory, "rush.json"), "file")) return {
+				if (await pathExists(path$1.join(directory, "rush.json"), "file")) return {
 					name: "pnpm",
 					agent: "pnpm-rush"
 				};
-				for (const lock of Object.keys(LOCKS)) if (await pathExists(path.join(directory, lock), "file")) {
+				for (const lock of Object.keys(LOCKS)) if (await pathExists(path$1.join(directory, lock), "file")) {
 					const name = LOCKS[lock];
-					const result = await parsePackageJson(path.join(directory, "package.json"), options);
+					const result = await parsePackageJson(path$1.join(directory, "package.json"), options);
 					if (result) return result;
 					else return {
 						name,
@@ -18130,13 +18130,13 @@ async function detect(options = {}) {
 				break;
 			case "packageManager-field":
 			case "devEngines-field": {
-				const result = await parsePackageJson(path.join(directory, "package.json"), options);
+				const result = await parsePackageJson(path$1.join(directory, "package.json"), options);
 				if (result) return result;
 				break;
 			}
 			case "install-metadata": for (const metadata of Object.keys(INSTALL_METADATA)) {
 				const fileOrDir = metadata.endsWith("/") ? "dir" : "file";
-				if (await pathExists(path.join(directory, metadata), fileOrDir)) {
+				if (await pathExists(path$1.join(directory, metadata), fileOrDir)) {
 					const name = INSTALL_METADATA[metadata];
 					return {
 						name,
@@ -18167,7 +18167,7 @@ function getNameAndVer(pkg) {
 }
 async function handlePackageManager(filepath, options) {
 	try {
-		const content = await fs.readFile(filepath, "utf8");
+		const content = await fs$1.readFile(filepath, "utf8");
 		const pkg = options.packageJsonParser ? await options.packageJsonParser(content, filepath) : JSON.parse(content);
 		const nameAndVer = getNameAndVer(pkg);
 		if (nameAndVer) return resolveAgent(nameAndVer.name, nameAndVer.ver) ?? options.onUnknown?.(pkg.packageManager) ?? null;
